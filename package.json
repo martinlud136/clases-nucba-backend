@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "moment": "^2.29.4"
+  },
+  "name": "clase2",
+  "description": "En este repo vamos a estar subiendo el código que desarrollemos en clase",
+  "version": "1.0.0",
+  "main": "main.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
