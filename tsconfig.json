@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "target": "es2016",
+        "module": "commonJS",
+        "strict": true,
+        "esModuleInterop": true, 
+        "outDir": "./dist",
+        "sourceMap": true,                              
+    },
+    "include": ["/**/*.ts", "/index.ts", "/tipos.ts"],
+    "exclude": ["node_modules"]
+}
