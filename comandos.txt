@@ -1,0 +1,9 @@
+1-iniciar el proyecto npm init -y (iniciamos proyecto node)
+
+2-npm install typescript (instala typescript)
+
+3-tsc --init        (aca creo el archivo tsconfig.json, lo unico que modificamos es el outDir: ./dist)
+
+4-en una terminal: tsc --watch (compila en el directorio dist los archivos ts, y observa cambios, luego compila)
+
+5-en otra terminal nodemon src/1-arrow.js (observamos cambios en el archivo deseado, en este caso, 1-arrow.js)
