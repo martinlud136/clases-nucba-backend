@@ -1,0 +1,6 @@
+1-primero defino el modelo del servidor models/server
+2-luego database/config.ts
+3-luego models/student.ts
+4-luego creo la primer ruta post en routes/students.ts
+5-luego creo el primer metodo createStudent en controllers/stuents.ts
+
