@@ -2,7 +2,7 @@ import { Router } from "express";
 import { check } from "express-validator";
 import { existeEmail } from "../helpers/validacionesDB";
 import { recolectarErrores } from "../middlewares/recolectarErrores";
-import { register, verifyUser } from "../controllers/auth";
+import { register, verifyUser, login } from "../controllers/auth";
 
 const router = Router();
 
@@ -30,6 +30,18 @@ router.patch(
     recolectarErrores,
   ],
   verifyUser
+);
+
+router.post(
+  "/login",
+  [
+    check("email", "El email es requerido").isEmail(),
+    check("password", "El password debe ser de 6 caracteres").isLength({
+      min: 6,
+    }),
+    recolectarErrores,
+  ],
+  login
 );
 
 export default router;

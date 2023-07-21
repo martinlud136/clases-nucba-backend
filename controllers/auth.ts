@@ -4,6 +4,7 @@ import { ROLES } from "../helpers/constants";
 import bcryptjs from "bcryptjs"
 import randomstring from "randomstring"
 import { sendEmail } from "../mailer/mailer";
+import generarJWT from "../helpers/generarJWT"
 
 export const register =async (req:Request, res:Response):Promise<void> => {
 
@@ -68,6 +69,42 @@ export const verifyUser =async (req:Request, res:Response):Promise<void> => {
             msg: "Usuario verificado con éxito"
         })
 
+    }catch(error){
+        console.log(error)
+        res.status(500).json({
+            msg: "Error en el servidor"
+        })
+    }
+}
+
+export const login =async (req:Request, res: Response):Promise<void> => {
+    const {email, password }:IUser = req.body
+
+    try{
+        const usuario = await Usuario.findOne({email})
+
+        if(!usuario){
+            res.status(400).json({
+                msg: "No se encontró el email en la base de datos"
+            });
+            return
+        }
+
+        const validarPassword = bcryptjs.compareSync(password, usuario.password)
+
+        if(!validarPassword){
+            res.status(400).json({
+                msg: "La contraseña es incorrecta"
+            });
+            return;
+        }
+
+        const token = await generarJWT(usuario.id)
+
+        res.json({
+            usuario,
+            token
+        })
     }catch(error){
         console.log(error)
         res.status(500).json({
