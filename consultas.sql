@@ -1,118 +1,75 @@
--- Creamos tabla
-CREATE TABLE camadas (
+CREATE TABLE camada (
 	id serial not null primary key,
-	nombre varchar(5),
-	dias varchar(255)
+	nombre int not null unique,
+	dias varchar(150) not null,
+	modulo varchar(100) not null
 );
-
--- Traemos todo de la tabla
-SELECT * FROM camadas;
-
---Generamos algunas filas mas
-
-INSERT INTO camadas (nombre, dias) VALUES (2817, 'Lunes y miercoles');
-
-INSERT INTO camadas (nombre, dias) VALUES (3017, 'Lunes y miercoles');
-
-INSERT INTO camadas (nombre, dias) VALUES (1617, 'Martes y jueves');
-
-INSERT INTO camadas (nombre, dias) VALUES (1717, 'Martes y jueves');
-
-
---Aprendemos sobre el where
-
-SELECT * FROM camadas WHERE id = 3;
-
-SELECT * FROM camadas WHERE dias = 'Martes y jueves';
-
-
---Seleccionamos campos con dos condiciones
-
-SELECT * FROM camadas WHERE dias = 'Martes y jueves' AND id > 3;
-
-
---Actualizando registros
-
-UPDATE camadas SET dias = 'Sabados' WHERE nombre = '3017';
-
---Actualizando TODOS los registros. 
-
-UPDATE camadas SET dias = 'Sabados';
-
---Vamos con el DELETE sin el WHERE Se eliminan todos los registros Ojo!
-
-DELETE from camadas;
-
---Delete de muchas filas por valor de columna
-
-DELETE from camadas where dias = 'Martes y jueves';
-
---Delete mas "seguro" de una única fila
-
-DELETE from camadas where id = 4;
-
---Llegado este punto, ya vimos las 4 acciones básicas de un CRUD.
---Vamos a eliminar la tabla de camadas y crear otra tabla que nos va a ayudar a realizar consultas de manera mas especifica.
-
-DROP table camadas;
 
 CREATE TABLE alumno (
 	id serial not null primary key,
 	nombre varchar(255) not null,
 	mail varchar(150) not null,
-	edad int not null
+	edad int not null,
+	camada int,
+	foreign key(camada) references camada(nombre)
 );
 
-INSERT INTO alumno (nombre, mail, edad) values ('Jose', 'jose@hotmail.com', 31);
+--Insertar varios valores en una sola query
 
-INSERT INTO alumno (nombre, mail, edad) values ('Juan', 'juan@gmail.com', 24);
+INSERT INTO camada (nombre, dias, modulo)
+VALUES
+	(2717, 'Martes y jueves', 'Backend'),
+	(2817, 'Lunes y miercoles', 'React'),
+	(2617, 'Lunes y miercoles', 'Backend'),
+	(3217, 'Martes y jueves', 'Javascript');
 
-INSERT INTO alumno (nombre, mail, edad) values ('Paola', 'paola@hotmail.com', 33);
+INSERT INTO alumno (nombre, mail, edad, camada)
+VALUES
+	('Juan', 'juan@gmail.com', 32, 2717),
+	('Romina', 'romina@gmail.com', 34, 2817),
+	('Lucas', 'lucas@gmail.com', 28, 2617),
+	('Martina', 'martina@hotmail.com', 26, 2717),
+	('Jose', 'jose@hotmail.com', 29, 3217),
+	('Aldana', 'aldana@hotmail.com', 24, 2817);
 
-INSERT INTO alumno (nombre, mail, edad) values ('Martina', 'Martina@gmail.com', 29);
 
+--Comenzamos con left join. Traeme TODOS los registros de la tabla de la izquierda y solo los que esten relacionados a estos de la tabla de la derecha.
 
---limit: Limita la cantidad de filas que nos retorna de query
+--Vemos como darle apodos a las tablas
 
-SELECT * from alumno limit 2;
+SELECT a.id, a.nombre FROM alumno a;
 
---where: Devuelve los alumnos segun la condicion dada
+--Select el id y nombre de alumnos. Traeme tambien el nombre, dias y modulos cuyo a.camada coincida con c.nombre
+SELECT a.id, a.nombre, c.nombre, c.dias, c.modulo FROM alumno a left join camada c on a.camada = c.nombre;
 
-SELECT * from alumno where edad > 29;
-SELECT * from alumno where edad >= 29;
+--Agregamos una nueva camada
+INSERT INTO camada (nombre, dias, modulo) values (3317, 'Lunes y miercoles', 'Javascript');
 
---and: Devuelve los alumnos que cumplan con todas las condiciones dadas
+--Repetimos el left join de arriba para mostrar como no aparece esa camada en ningun lado, ya que ningun alumno la tiene asignada
+SELECT a.id, a.nombre, c.nombre, c.dias, c.modulo FROM alumno a left join camada c on a.camada = c.nombre;
 
-SELECT * from alumno where edad > 29 and nombre = 'Jose';
+--Agregamos un nuevo alumno sin camada
+INSERT INTO alumno (nombre, mail, edad) values ('Adrian', 'adrian@gmail.com', 23);
 
---or: Devuelve todos los alumnos que cumplan con ambas condiciones
+--Repetimos el left join de arriba para mostrar como aparece Adrian a pesar de no tener camada ya que traemos TODO lo de la tabla de la izquierda aunque no tenga datos relacionados con la tabla de la derecha
+SELECT a.id, a.nombre, c.nombre, c.dias, c.modulo FROM alumno a left join camada c on a.camada = c.nombre;
 
-SELECT * from alumno where edad > 29 or nombre = 'Martina';
+--Vamos con el right join, que tendria la misma logica que el left join, solo que va a traer TODOS los datos de la tabla de la derecha y solo los elementos relacionados de la tabla de la izquierda. Armamos la misma consulta, pero con right join
+SELECT a.id, a.nombre, c.nombre, c.dias, c.modulo FROM alumno a right join camada c on a.camada = c.nombre;
 
---negacion: Devuelve todos los alumnos que no cumplan con la condicion
+--Inner join. Solo nos va a traer los elementos cuta data este relacionada. No va a traer el alumno sin camada, ni la camada sin alumnos
 
-SELECT * from alumno where nombre != 'Jose';
+SELECT a.id, a.nombre, c.nombre, c.dias, c.modulo FROM alumno a inner join camada c on a.camada = c.nombre;
 
---Between: Para numeros. Trae los alumnos que se encuentren entre X e Y
+--Notamos como, en camadas, tenemos repeticion en el campo de dias. Podemos ver cuantas camadas hay para cada dia.
 
-SELECT * from alumno where edad between 28 and 32;
+--Mostrame la columna dias y cuantos elementos hay de ese dia agrupado por dias
+SELECT dias, count(dias) FROM camada group by dias;
 
---Like: Para busquedas por coincidencia parcial
+--Podemos combinar esto con los joins. Obtener cuantos alumnos cursan cada dia
 
-SELECT * from alumno where mail like '%hotmail%';
-SELECT * from alumno where mail like '%gmail.com';
-SELECT * from alumno where mail like 'paola%';
+SELECT c.dias, count(c.dias) FROM camada c left join alumno a on a.camada = c.nombre group by c.dias;
 
---OrderBy
+--Obtener cuantos alumnos tengo por camada
 
-SELECT * from alumno order by edad asc;
-SELECT * from alumno order by edad desc;
-SELECT * from alumno order by nombre asc;
-
---Tambien puedo seleccionar solo las columnas que me interesen, no necesariamente traerme todas
-
-SELECT id, nombre from alumno;
-
---Tambien podemos darle apodos a la columna
-
-SELECT id, nombre as name from alumno;
+SELECT c.nombre, count(c.nombre) FROM camada c left join alumno a on a.camada = c.nombre group by c.nombre;
