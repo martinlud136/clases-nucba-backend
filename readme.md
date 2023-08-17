@@ -1,5 +1,3 @@
-En esta clase vamos a conocer el ORM Prisma, el cual nos permitira integrar nuestros proyectos con bases de datos relacionales de manera mucho mas sencilla. No vamos a ver TODO sobre Prisma ORM porque es imposible ver todos los métodos, pero vamos a ver lo sufuciente como para empezar a trabajar
-
 Con la DB Postgres levantada (Y limpia, sin tablas) y pgAdmin4 abierto
 
 Vamos a crear un proyecto nuevo y levantar el package.json con un `npm init -y`
@@ -28,5 +26,4 @@ Con esto vamos a generar la carpeta migrations y el migration.sql en donde vamos
 Vamos a instalar Prisma Clienmt para poder generar las queries que van a interactuar con la base de datos
 `npm install @prisma/client`
 
-Creamos un index.ts y vamos siguiendo el código modelo.
-En esta clase vamos a generar unas cuantas consultas solo de prueba que vamos a ir escribiendo, probando y comentando a medida que las vayamos mostrando.
+Creamos un index.ts y realizamos las consultas
