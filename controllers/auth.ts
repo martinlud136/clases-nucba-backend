@@ -6,11 +6,20 @@ import randomstring from "randomstring"
 import { sendEmail } from "../mailer/mailer";
 import generarJWT from "../helpers/generarJWT"
 
+import { prisma } from "../app";
+
 export const register =async (req:Request, res:Response):Promise<void> => {
 
-    const {nombre, email, password }: IUser = req.body
+    const {nombre, email, password, rol }: IUser = req.body
     
-    const usuario = new Usuario({nombre, email, password })
+    // const usuario = new Usuario({nombre, email, password })
+
+    const usuario: IUser = {
+        nombre,
+        email,
+        password,
+        rol
+    }
 
     const salt = bcryptjs.genSaltSync()
 
@@ -26,7 +35,11 @@ export const register =async (req:Request, res:Response):Promise<void> => {
 
     usuario.code = newCode
 
-    await usuario.save()
+    // await usuario.save()
+
+    await prisma.user.create({
+        data: usuario
+    })
 
     await sendEmail(email, newCode)
 
@@ -40,7 +53,12 @@ export const verifyUser =async (req:Request, res:Response):Promise<void> => {
     const { email, code } = req.body
     
     try{
-        const usuario = await Usuario.findOne({email})
+        // const usuario = await Usuario.findOne({email})
+        const usuario = await prisma.user.findFirst({
+            where: {
+                email
+            }
+        })
 
         if(!usuario){
             res.status(400).json({
@@ -63,7 +81,15 @@ export const verifyUser =async (req:Request, res:Response):Promise<void> => {
             return
         }
 
-        const usuarioActualizado = await Usuario.findOneAndUpdate({email},{verified: true})
+        // const usuarioActualizado = await Usuario.findOneAndUpdate({email},{verified: true})
+        const usuarioActualizado = await prisma.user.update({
+            where:{
+                email
+            },
+            data: {
+                verified: true
+            }
+        })
 
         res.status(200).json({
             msg: "Usuario verificado con éxito"
@@ -81,7 +107,12 @@ export const login =async (req:Request, res: Response):Promise<void> => {
     const {email, password }:IUser = req.body
 
     try{
-        const usuario = await Usuario.findOne({email})
+        // const usuario = await Usuario.findOne({email})
+        const usuario = await prisma.user.findFirst({
+            where: {
+                email
+            }
+        })
 
         if(!usuario){
             res.status(400).json({

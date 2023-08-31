@@ -20,16 +20,16 @@ export class Server {
         this.ordersPath = "/orders"
         this.issuesPath = "/issues"
 
-        this.conectarDB()
+        // this.conectarDB()
 
         this.middlewares()
 
         this.routes(); //falto esto
     }
 
-    async conectarDB(): Promise<void>{
-        await dbConnection()
-    }
+    // async conectarDB(): Promise<void>{
+    //     await dbConnection()
+    // }
 
     middlewares(): void{
         this.app.use(cors())
